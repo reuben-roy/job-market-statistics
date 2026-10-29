@@ -1,0 +1,812 @@
+{
+  "version": "1.1.0",
+  "skills": [
+    {
+      "id": "python",
+      "label": "Python",
+      "aliases": [
+        "python"
+      ]
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript",
+      "aliases": [
+        "javascript"
+      ]
+    },
+    {
+      "id": "typescript",
+      "label": "TypeScript",
+      "aliases": [
+        "typescript"
+      ]
+    },
+    {
+      "id": "java",
+      "label": "Java",
+      "aliases": [
+        "java"
+      ]
+    },
+    {
+      "id": "csharp",
+      "label": "C#",
+      "aliases": [
+        "c#",
+        "c sharp"
+      ]
+    },
+    {
+      "id": "cpp",
+      "label": "C++",
+      "aliases": [
+        "c++"
+      ]
+    },
+    {
+      "id": "go",
+      "label": "Go",
+      "aliases": [
+        "golang"
+      ]
+    },
+    {
+      "id": "rust",
+      "label": "Rust",
+      "aliases": [
+        "rust"
+      ]
+    },
+    {
+      "id": "ruby",
+      "label": "Ruby",
+      "aliases": [
+        "ruby"
+      ]
+    },
+    {
+      "id": "sql",
+      "label": "SQL",
+      "aliases": [
+        "sql"
+      ]
+    },
+    {
+      "id": "postgresql",
+      "label": "PostgreSQL",
+      "aliases": [
+        "postgresql",
+        "postgres"
+      ]
+    },
+    {
+      "id": "mysql",
+      "label": "MySQL",
+      "aliases": [
+        "mysql"
+      ]
+    },
+    {
+      "id": "react",
+      "label": "React",
+      "aliases": [
+        "react",
+        "react.js",
+        "reactjs"
+      ]
+    },
+    {
+      "id": "nodejs",
+      "label": "Node.js",
+      "aliases": [
+        "node.js",
+        "nodejs"
+      ]
+    },
+    {
+      "id": "aws",
+      "label": "AWS",
+      "aliases": [
+        "aws",
+        "amazon web services"
+      ]
+    },
+    {
+      "id": "azure",
+      "label": "Microsoft Azure",
+      "aliases": [
+        "azure",
+        "microsoft azure"
+      ]
+    },
+    {
+      "id": "gcp",
+      "label": "Google Cloud",
+      "aliases": [
+        "google cloud",
+        "google cloud platform",
+        "gcp"
+      ]
+    },
+    {
+      "id": "docker",
+      "label": "Docker",
+      "aliases": [
+        "docker"
+      ]
+    },
+    {
+      "id": "kubernetes",
+      "label": "Kubernetes",
+      "aliases": [
+        "kubernetes",
+        "k8s"
+      ]
+    },
+    {
+      "id": "terraform",
+      "label": "Terraform",
+      "aliases": [
+        "terraform"
+      ]
+    },
+    {
+      "id": "git",
+      "label": "Git",
+      "aliases": [
+        "git"
+      ]
+    },
+    {
+      "id": "linux",
+      "label": "Linux",
+      "aliases": [
+        "linux"
+      ]
+    },
+    {
+      "id": "machine-learning",
+      "label": "Machine learning",
+      "aliases": [
+        "machine learning"
+      ]
+    },
+    {
+      "id": "data-analysis",
+      "label": "Data analysis",
+      "aliases": [
+        "data analysis",
+        "data analytics"
+      ]
+    },
+    {
+      "id": "excel",
+      "label": "Excel",
+      "aliases": [
+        "microsoft excel",
+        "excel"
+      ]
+    },
+    {
+      "id": "tableau",
+      "label": "Tableau",
+      "aliases": [
+        "tableau"
+      ]
+    },
+    {
+      "id": "power-bi",
+      "label": "Power BI",
+      "aliases": [
+        "power bi",
+        "powerbi"
+      ]
+    },
+    {
+      "id": "project-management",
+      "label": "Project management",
+      "aliases": [
+        "project management"
+      ]
+    },
+    {
+      "id": "salesforce",
+      "label": "Salesforce",
+      "aliases": [
+        "salesforce"
+      ]
+    },
+    {
+      "id": "figma",
+      "label": "Figma",
+      "aliases": [
+        "figma"
+      ]
+    },
+    {
+      "id": "bash",
+      "label": "Bash",
+      "aliases": [
+        "bash"
+      ]
+    },
+    {
+      "id": "shell-scripting",
+      "label": "Shell scripting",
+      "aliases": [
+        "shell scripting"
+      ]
+    },
+    {
+      "id": "scala",
+      "label": "Scala",
+      "aliases": [
+        "scala"
+      ]
+    },
+    {
+      "id": "kotlin",
+      "label": "Kotlin",
+      "aliases": [
+        "kotlin"
+      ]
+    },
+    {
+      "id": "swift",
+      "label": "Swift",
+      "aliases": [
+        "swift"
+      ]
+    },
+    {
+      "id": "php",
+      "label": "PHP",
+      "aliases": [
+        "php"
+      ]
+    },
+    {
+      "id": "perl",
+      "label": "Perl",
+      "aliases": [
+        "perl"
+      ]
+    },
+    {
+      "id": "html",
+      "label": "HTML",
+      "aliases": [
+        "html"
+      ]
+    },
+    {
+      "id": "css",
+      "label": "CSS",
+      "aliases": [
+        "css"
+      ]
+    },
+    {
+      "id": "graphql",
+      "label": "GraphQL",
+      "aliases": [
+        "graphql"
+      ]
+    },
+    {
+      "id": "rest-api",
+      "label": "REST APIs",
+      "aliases": [
+        "rest api",
+        "rest apis",
+        "restful api",
+        "restful apis"
+      ]
+    },
+    {
+      "id": "spring",
+      "label": "Spring",
+      "aliases": [
+        "spring boot",
+        "spring framework"
+      ]
+    },
+    {
+      "id": "django",
+      "label": "Django",
+      "aliases": [
+        "django"
+      ]
+    },
+    {
+      "id": "flask",
+      "label": "Flask",
+      "aliases": [
+        "flask"
+      ]
+    },
+    {
+      "id": "angular",
+      "label": "Angular",
+      "aliases": [
+        "angular"
+      ]
+    },
+    {
+      "id": "vue",
+      "label": "Vue.js",
+      "aliases": [
+        "vue.js",
+        "vuejs"
+      ]
+    },
+    {
+      "id": "nextjs",
+      "label": "Next.js",
+      "aliases": [
+        "next.js",
+        "nextjs"
+      ]
+    },
+    {
+      "id": "dotnet",
+      "label": ".NET",
+      "aliases": [
+        ".net",
+        "dotnet"
+      ]
+    },
+    {
+      "id": "redis",
+      "label": "Redis",
+      "aliases": [
+        "redis"
+      ]
+    },
+    {
+      "id": "mongodb",
+      "label": "MongoDB",
+      "aliases": [
+        "mongodb"
+      ]
+    },
+    {
+      "id": "elasticsearch",
+      "label": "Elasticsearch",
+      "aliases": [
+        "elasticsearch"
+      ]
+    },
+    {
+      "id": "snowflake",
+      "label": "Snowflake",
+      "aliases": [
+        "snowflake"
+      ]
+    },
+    {
+      "id": "databricks",
+      "label": "Databricks",
+      "aliases": [
+        "databricks"
+      ]
+    },
+    {
+      "id": "spark",
+      "label": "Apache Spark",
+      "aliases": [
+        "apache spark",
+        "pyspark"
+      ]
+    },
+    {
+      "id": "kafka",
+      "label": "Apache Kafka",
+      "aliases": [
+        "apache kafka",
+        "kafka"
+      ]
+    },
+    {
+      "id": "airflow",
+      "label": "Apache Airflow",
+      "aliases": [
+        "apache airflow",
+        "airflow"
+      ]
+    },
+    {
+      "id": "pandas",
+      "label": "pandas",
+      "aliases": [
+        "pandas"
+      ]
+    },
+    {
+      "id": "numpy",
+      "label": "NumPy",
+      "aliases": [
+        "numpy"
+      ]
+    },
+    {
+      "id": "pytorch",
+      "label": "PyTorch",
+      "aliases": [
+        "pytorch"
+      ]
+    },
+    {
+      "id": "tensorflow",
+      "label": "TensorFlow",
+      "aliases": [
+        "tensorflow"
+      ]
+    },
+    {
+      "id": "scikit-learn",
+      "label": "scikit-learn",
+      "aliases": [
+        "scikit-learn",
+        "sklearn"
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "label": "Deep learning",
+      "aliases": [
+        "deep learning"
+      ]
+    },
+    {
+      "id": "natural-language-processing",
+      "label": "Natural language processing",
+      "aliases": [
+        "natural language processing"
+      ]
+    },
+    {
+      "id": "generative-ai",
+      "label": "Generative AI",
+      "aliases": [
+        "generative ai",
+        "generative artificial intelligence"
+      ]
+    },
+    {
+      "id": "llm",
+      "label": "Large language models",
+      "aliases": [
+        "large language model",
+        "large language models",
+        "llm",
+        "llms"
+      ]
+    },
+    {
+      "id": "computer-vision",
+      "label": "Computer vision",
+      "aliases": [
+        "computer vision"
+      ]
+    },
+    {
+      "id": "data-engineering",
+      "label": "Data engineering",
+      "aliases": [
+        "data engineering"
+      ]
+    },
+    {
+      "id": "data-visualization",
+      "label": "Data visualization",
+      "aliases": [
+        "data visualization",
+        "data visualisation"
+      ]
+    },
+    {
+      "id": "statistics",
+      "label": "Statistics",
+      "aliases": [
+        "statistics",
+        "statistical analysis"
+      ]
+    },
+    {
+      "id": "experimentation",
+      "label": "Experimentation",
+      "aliases": [
+        "a/b testing",
+        "ab testing"
+      ]
+    },
+    {
+      "id": "ci-cd",
+      "label": "CI/CD",
+      "aliases": [
+        "ci/cd",
+        "continuous integration",
+        "continuous delivery"
+      ]
+    },
+    {
+      "id": "gitlab",
+      "label": "GitLab",
+      "aliases": [
+        "gitlab"
+      ]
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "aliases": [
+        "github"
+      ]
+    },
+    {
+      "id": "jenkins",
+      "label": "Jenkins",
+      "aliases": [
+        "jenkins"
+      ]
+    },
+    {
+      "id": "ansible",
+      "label": "Ansible",
+      "aliases": [
+        "ansible"
+      ]
+    },
+    {
+      "id": "observability",
+      "label": "Observability",
+      "aliases": [
+        "observability"
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "label": "Cybersecurity",
+      "aliases": [
+        "cybersecurity",
+        "cyber security"
+      ]
+    },
+    {
+      "id": "networking",
+      "label": "Networking",
+      "aliases": [
+        "networking"
+      ]
+    },
+    {
+      "id": "product-management",
+      "label": "Product management",
+      "aliases": [
+        "product management",
+        "product manager"
+      ]
+    },
+    {
+      "id": "user-research",
+      "label": "User research",
+      "aliases": [
+        "user research",
+        "ux research"
+      ]
+    },
+    {
+      "id": "user-experience",
+      "label": "User experience",
+      "aliases": [
+        "user experience",
+        "ux design"
+      ]
+    },
+    {
+      "id": "accessibility",
+      "label": "Accessibility",
+      "aliases": [
+        "accessibility"
+      ]
+    },
+    {
+      "id": "prototyping",
+      "label": "Prototyping",
+      "aliases": [
+        "prototyping"
+      ]
+    },
+    {
+      "id": "agile",
+      "label": "Agile",
+      "aliases": [
+        "agile"
+      ]
+    },
+    {
+      "id": "scrum",
+      "label": "Scrum",
+      "aliases": [
+        "scrum"
+      ]
+    },
+    {
+      "id": "jira",
+      "label": "Jira",
+      "aliases": [
+        "jira"
+      ]
+    },
+    {
+      "id": "confluence",
+      "label": "Confluence",
+      "aliases": [
+        "confluence"
+      ]
+    },
+    {
+      "id": "stakeholder-management",
+      "label": "Stakeholder management",
+      "aliases": [
+        "stakeholder management"
+      ]
+    },
+    {
+      "id": "financial-analysis",
+      "label": "Financial analysis",
+      "aliases": [
+        "financial analysis",
+        "financial modeling",
+        "financial modelling"
+      ]
+    },
+    {
+      "id": "accounting",
+      "label": "Accounting",
+      "aliases": [
+        "accounting"
+      ]
+    },
+    {
+      "id": "forecasting",
+      "label": "Forecasting",
+      "aliases": [
+        "forecasting"
+      ]
+    },
+    {
+      "id": "budgeting",
+      "label": "Budgeting",
+      "aliases": [
+        "budgeting"
+      ]
+    },
+    {
+      "id": "sales",
+      "label": "Sales",
+      "aliases": [
+        "sales"
+      ]
+    },
+    {
+      "id": "crm",
+      "label": "CRM",
+      "aliases": [
+        "customer relationship management",
+        "crm"
+      ]
+    },
+    {
+      "id": "marketing",
+      "label": "Marketing",
+      "aliases": [
+        "marketing"
+      ]
+    },
+    {
+      "id": "seo",
+      "label": "SEO",
+      "aliases": [
+        "search engine optimization",
+        "seo"
+      ]
+    },
+    {
+      "id": "recruiting",
+      "label": "Recruiting",
+      "aliases": [
+        "recruiting",
+        "recruitment"
+      ]
+    },
+    {
+      "id": "supply-chain",
+      "label": "Supply chain",
+      "aliases": [
+        "supply chain"
+      ]
+    },
+    {
+      "id": "operations",
+      "label": "Operations",
+      "aliases": [
+        "operations"
+      ]
+    },
+    {
+      "id": "customer-service",
+      "label": "Customer service",
+      "aliases": [
+        "customer service",
+        "customer support"
+      ]
+    },
+    {
+      "id": "communication",
+      "label": "Communication",
+      "aliases": [
+        "communication"
+      ]
+    },
+    {
+      "id": "leadership",
+      "label": "Leadership",
+      "aliases": [
+        "leadership"
+      ]
+    },
+    {
+      "id": "negotiation",
+      "label": "Negotiation",
+      "aliases": [
+        "negotiation"
+      ]
+    },
+    {
+      "id": "technical-writing",
+      "label": "Technical writing",
+      "aliases": [
+        "technical writing"
+      ]
+    },
+    {
+      "id": "project-planning",
+      "label": "Project planning",
+      "aliases": [
+        "project planning"
+      ]
+    },
+    {
+      "id": "powerpoint",
+      "label": "PowerPoint",
+      "aliases": [
+        "powerpoint",
+        "power point"
+      ]
+    },
+    {
+      "id": "word",
+      "label": "Microsoft Word",
+      "aliases": [
+        "microsoft word"
+      ]
+    },
+    {
+      "id": "sap",
+      "label": "SAP",
+      "aliases": [
+        "sap"
+      ]
+    },
+    {
+      "id": "netsuite",
+      "label": "NetSuite",
+      "aliases": [
+        "netsuite"
+      ]
+    }
+  ]
+}

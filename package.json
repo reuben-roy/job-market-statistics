@@ -1,0 +1,21 @@
+{
+  "name": "job-market-statistics",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.mjs",
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1",
+    "deploy": "cf deploy"
+  },
+  "dependencies": {
+    "mammoth": "1.13.0",
+    "pdfjs-dist": "6.4.299"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "2.0.0-beta.v.6",
+    "cf": "1.0.0-beta.24",
+    "vite": "8.3.5"
+  }
+}

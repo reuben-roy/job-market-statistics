@@ -1,0 +1,5 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validSnapshot} from './worker.mjs';
+const value = {schema_version:3,vocabulary_version:'1.0.0',generated_at:'2026-10-27T00:00:00Z',source:'collector snapshot',groups:[{role:'data',country:'US',industry:'unknown',status:'open',published_on:'2026-01-01',postings:2,with_skills:1,classified:1,sections:{required:{python:1},preferred:{},responsibilities:{}},salary:{count:1,min_sum:100000,max_sum:200000},skills:{python:1}}]};
+test('accepts bounded aggregate counts and rejects posting or company content',()=>{assert.equal(validSnapshot(value),true);assert.equal(validSnapshot({...value,groups:[{...value.groups[0],company:'Acme'}]}),false);assert.equal(validSnapshot({...value,groups:[{...value.groups[0],skills:{python:3}}]}),false);});
