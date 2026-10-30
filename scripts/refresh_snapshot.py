@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run on the collector host: send only aggregate counts to the dashboard."""
+import fcntl
 import base64
 import json
 import os
@@ -13,6 +14,11 @@ import sys
 import urllib.request
 
 root = pathlib.Path.home() / '.config' / 'job-statistics'
+refresh_lock = (root / 'refresh.lock').open('a')
+try:
+    fcntl.flock(refresh_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+except BlockingIOError:
+    raise SystemExit('Another snapshot refresh is already running')
 names = subprocess.run(['docker', 'ps', '--format', '{{.Names}}'], capture_output=True, text=True, check=True).stdout.splitlines()
 collectors = [name for name in names if name.startswith('collector-')]
 if len(collectors) != 1:
@@ -26,7 +32,8 @@ vocab = base64.b64encode((root / 'vocabulary.json').read_bytes()).decode('ascii'
 exporter = subprocess.run(['docker', 'exec', '-i', '-e', 'STATS_VOCAB_B64=' + vocab, collector, 'python3', '-'], input=(root / 'export_snapshot.py').read_bytes(), capture_output=True, check=True)
 value = json.loads(exporter.stdout)
 # Statistics-only sources have their own journal; they never enter the desktop app's outbox.
-subprocess.run([sys.executable, str(root / 'collect_lever.py')], check=True)
+if os.environ.get('STATS_SKIP_COLLECTION') != '1':
+    subprocess.run([sys.executable, str(root / 'collect_lever.py')], check=True)
 env = {**os.environ, 'STATS_VOCAB_B64': vocab, 'COLLECTOR_DATABASE': str(root / 'statistics-only.sqlite3'), 'STATISTICS_ONLY': '1'}
 extra_freshness = source_freshness(root / 'statistics-only.sqlite3')
 extra = subprocess.run([sys.executable, str(root / 'export_snapshot.py')], env=env, capture_output=True, check=True)

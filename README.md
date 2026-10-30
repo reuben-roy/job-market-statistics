@@ -112,3 +112,7 @@ Fortune 500 discovery runs weekly with checkpointed company-level results; disco
 require API and ownership validation before activation. It has substantial false negatives, so an
 unresolved company remains an investigation item. All 500 domains are in the input; this is not a
 claim that all 500 career sites are currently collected. Logs live under ~/.config/job-statistics/.
+
+Snapshot publication also runs hourly at minute 45, reading already collected records with
+`STATS_SKIP_COLLECTION=1`. This does not re-poll job boards. A global refresh lock prevents
+overlapping publication runs; the daily 03:15 job continues to refresh Lever collection.
