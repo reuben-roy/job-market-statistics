@@ -40,7 +40,7 @@ for (const [id,defaultValue] of [['trend-1','python'],['trend-2','sql'],['trend-
 function drawTrend() {
   if (!data) return;
   const selected=[...new Set(['trend-1','trend-2','trend-3'].map(id=>$(id).value).filter(Boolean))];
-  renderTrend({groups:data.groups,selected,labels,chart:$('trend-chart'),legend:$('trend-legend'),table:$('trend-table'),details:$('trend-details'),status:$('trend-status')});
+  renderTrend({groups:data.groups,selected,labels,chart:$('trend-chart'),legend:$('trend-legend'),table:$('trend-table'),details:$('trend-details'),status:$('trend-status'),mode:$('trend-mode').value});
 }
 function showData() {
   if (!rawSnapshot) return;
@@ -54,7 +54,7 @@ function showData() {
     data.groups=groups; data.skills=vocabulary.skills.map(s=>({id:s.id,label:s.label,postings:counts.get(s.id)||0})).sort((a,b)=>b.postings-a.postings || a.label.localeCompare(b.label));
   }
   const generated=new Date(data.generated_at);const stale=!Number.isFinite(generated.getTime()) || Date.now()-generated.getTime()>36*60*60*1000;
-  $('freshness').textContent=`${stale?'Possibly stale · ':''}Statistics generated ${generated.toLocaleString()} · source check time unavailable`;
+  $('freshness').textContent=generated.getUTCFullYear() < 2000 ? 'Source freshness unknown · some data may be stale' : `${stale?'Possibly stale · ':''}Oldest statistics-only source check: ${generated.toLocaleString()}`;
   $('status').hidden=data.denominator.postings>0;$('status').textContent='No collected postings match these filters.';
   const summary=$('summary');summary.replaceChildren();summary.hidden=!data.denominator.postings;
   for(const [value,label] of [[data.denominator.postings,'collected postings'],[data.coverage.classified,'postings with recognized sections'],[data.coverage.with_skills,'postings with a detected skill in any section'],[data.coverage.unknown_dates,'postings without a publication date']]) {const box=text('div','','metric');box.append(text('strong',String(value)),text('span',label));summary.append(box);}
@@ -66,6 +66,7 @@ function drawSkills() {
   for(const skill of visible) {const row=text('div','','skill-row');const bar=document.createElement('progress');bar.className='bar';bar.max=data.denominator.postings;bar.value=skill.postings;bar.setAttribute('aria-label',`${skill.label} share of postings`);row.append(text('strong',skill.label),bar,text('small',`${skill.postings} postings`));$('skills').append(row);}
   $('show-more').hidden=all.length<=12;$('show-more').textContent=showAllSkills?'Show fewer skills':`Show all ${all.length} skills`;
 }
+$('trend-mode').addEventListener('change',drawTrend);
 $('show-more').addEventListener('click',()=>{showAllSkills=!showAllSkills;drawSkills();});
 function salaryTable(target, headings, rows) {
   target.replaceChildren(); const head=document.createElement('thead'), hr=document.createElement('tr');
@@ -98,6 +99,9 @@ async function load() {
       try { const response=await fetch(url,{credentials:'omit',referrerPolicy:'no-referrer'});if(!response.ok) continue;const snapshot=await response.json();if(snapshot.schema_version===3 && snapshot.vocabulary_version===vocabulary.version){rawSnapshot=snapshot;break;} } catch { /* Try bundled fallback. */ }
     }
     if(!rawSnapshot) throw new Error('No compatible snapshot available');
+    const coverage=rawSnapshot.coverage;
+    $('coverage-summary').textContent=coverage?coverage.platforms.map(p=>`${p.platform}: ${p.boards} collected boards, ${p.postings.toLocaleString()} open postings, ${p.issues} source warnings`).join(' · '):'Coverage tracking is not available in this snapshot.';
+    if(coverage) salaryTable($('coverage-history'),['Date (UTC)','Collected boards','Open postings'],coverage.history.map(h=>[h.date,h.boards,h.postings]));
     showData();
   } catch(err) {$('status').textContent=`Statistics are currently unavailable (${err.message}). Please try again later.`;$('freshness').textContent='No current statistics';$('trend-status').textContent='Trend data is unavailable.';}
 }

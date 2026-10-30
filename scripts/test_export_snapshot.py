@@ -22,6 +22,7 @@ class SnapshotExportTest(unittest.TestCase):
                 ({'company':'Closed Company', 'title':'Engineer', 'raw_description':'<h2>Responsibilities</h2><p>Python</p>', 'country':'US', 'published_at':'2026-01-15T00:00:00Z'}, 'closed', 'id3'),
                 ({'company':'Pending Company', 'title':'Engineer', 'raw_description':'<h2>Requirements</h2><p>SQL</p>', 'country':'US', 'published_at':'2026-01-15T00:00:00Z'}, 'open', None),
             ]
+            rows.append(rows[0])
             db.executemany('insert into postings values (?,?,?)', [(json.dumps(p), status, feed) for p,status,feed in rows]); db.commit(); db.close()
             vocab = base64.b64encode((ROOT/'vocabulary.json').read_bytes()).decode()
             result = subprocess.run([sys.executable, str(ROOT/'scripts/export_snapshot.py')], env={**os.environ, 'COLLECTOR_DATABASE':str(path), 'STATS_VOCAB_B64':vocab}, capture_output=True, text=True, check=True)

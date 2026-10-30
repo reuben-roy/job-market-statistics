@@ -73,3 +73,42 @@ salary analysis is performed.
 The section-aware exporter reprocesses all retained postings on every refresh using one set of rules.
 Headings and candidate-facing boilerplate vary by employer; the recognized-section count and
 section-specific filters expose coverage but do not prove correctness. Vocabulary remains curated.
+
+## Statistics-only sources
+
+The daily refresh also collects a small pilot set of public Lever boards into a separate
+`statistics-only.sqlite3` journal on the collector host. These records are aggregated directly into
+the dashboard snapshot and never enter the Job Applicator feed's publishing outbox. Lever board
+failures or suspect empty/collapsed results retain the source’s prior records while other sources refresh;
+a posting closes after it is absent from two successful complete polls. The list of boards is in
+`scripts/collect_lever.py` and is intentionally small pending quality and operational validation.
+The Lever API's `createdAt` is not necessarily a publication date, so these records have unknown
+publication dates and are excluded when date filters are applied or monthly charts are drawn.
+Exact source identities are deduplicated before aggregation. Daily global board-coverage history is recorded from October 30, 2026; it cannot reconstruct earlier coverage. Matching equivalent jobs advertised under different identities remains approximate/unimplemented.
+
+## Fortune 500 expansion
+
+`reports/fortune500/` contains the earlier 2026 discovery inventory and current Workday candidate
+probes. A probed total is not a verified, unique posting count. The Workday collector runs
+independently of the app feed and stores descriptions in `workday-statistics.sqlite3`; its aggregate
+output joins the dashboard refresh when that database exists. It partitions larger boards when counts can be reconciled. If completeness cannot be established, capped subsets are explicitly partial and cannot close missing records. A board with missing listing paths can add
+valid postings but cannot close missing ones and is marked partially fresh. Source health determines
+the dashboard's conservative freshness label. Publication dates are unknown for these sources and
+are excluded from publication-month trends and date filters. A cycle takes hours because descriptions
+are fetched individually. Exact requisition identity prevents duplicate counts within a tenant, and daily aggregate coverage history is published without employer names; skill share is available to help compare differently sized cohorts, but does not
+correct selection bias.
+
+SmartRecruiters collection runs independently with five verified employer boards. It extracts the
+API's job-description and qualifications fields and uses the releasedDate for publication cohorts.
+All statistics-only records stay out of Job Applicator's outbox. Workday and SmartRecruiters details
+are cached for up to seven days, with listing-signature changes forcing a refresh. First backfills
+run asynchronously; configured or advertised totals are never treated as already collected data.
+
+## Scheduled operations
+
+On the collector host, Workday polls daily at 20:30 and SmartRecruiters at 19:00,
+using the host’s America/Phoenix timezone. The existing aggregate publisher runs at 03:15.
+Fortune 500 discovery runs weekly with checkpointed company-level results; discovered candidates
+require API and ownership validation before activation. It has substantial false negatives, so an
+unresolved company remains an investigation item. All 500 domains are in the input; this is not a
+claim that all 500 career sites are currently collected. Logs live under ~/.config/job-statistics/.

@@ -11,3 +11,5 @@ test('monthly cohorts aggregate and fill gaps',()=>{let r=monthlySeries(matching
 function matching(){return filterSnapshot(sample,vocab,all).groups;}
 
 test('salary averages weight postings rather than groups and ignore unknown dates in monthly view',()=>{const groups=[{published_on:'2026-01-01',salary:{count:2,min_sum:200000,max_sum:400000}},{published_on:'2026-01-02',salary:{count:1,min_sum:300000,max_sum:400000}},{published_on:null,salary:{count:1,min_sum:100000,max_sum:100000}}];assert.equal(salarySummary(groups).midpoint,187500);assert.equal(monthlySalary(groups)[0].midpoint,650000/3);});
+
+test('monthly share uses recognized postings as denominator and represents missing months as unknown',()=>{const groups=[{published_on:'2026-01-01',classified:4,skills:{python:2}},{published_on:'2026-01-02',classified:1,skills:{python:1}},{published_on:'2026-03-01',classified:2,skills:{python:1}}];const values=monthlySeries(groups,['python'],'share');assert.deepEqual(values.map(x=>[x.month,x.denominator,x.values.python]),[['2026-01',5,60],['2026-02',0,null],['2026-03',2,50]]);});

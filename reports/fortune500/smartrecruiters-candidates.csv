@@ -1,0 +1,5 @@
+company,board,result,total,first_page,url
+Westinghouse Air Brake,Wabtec,ok,776,100,https://api.smartrecruiters.com/v1/companies/Wabtec/postings?limit=100&offset=0
+Intuitive Surgical,Intuitive,ok,788,100,https://api.smartrecruiters.com/v1/companies/Intuitive/postings?limit=100&offset=0
+Western Digital,WesternDigital,ok,344,100,https://api.smartrecruiters.com/v1/companies/WesternDigital/postings?limit=100&offset=0
+Arista Networks,AristaNetworks,ok,240,100,https://api.smartrecruiters.com/v1/companies/AristaNetworks/postings?limit=100&offset=0

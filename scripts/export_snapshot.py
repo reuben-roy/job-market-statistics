@@ -77,10 +77,17 @@ path = os.environ.get('COLLECTOR_DATABASE', '/data/collector.sqlite3')
 with open(path + '.lock', 'a') as lock:
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     db = sqlite3.connect('file:' + path + '?mode=ro', uri=True)
-    rows = db.execute("select payload, status from postings where feed_id is not null").fetchall()
+    query = "select payload, status, id from postings" if os.environ.get("STATISTICS_ONLY") == "1" else "select payload, status, feed_id from postings where feed_id is not null"
+    rows = db.execute(query).fetchall()
     db.close()
     fcntl.flock(lock, fcntl.LOCK_UN)
-postings = [(json.loads(payload), status) for payload, status in rows]
+unique = {}
+for index,(payload,status,stored_id) in enumerate(rows):
+    record=json.loads(payload)
+    identity=record.get('canonical_id') or record.get('feed_id') or record.get('canonical_url') or stored_id or ('row',index)
+    old=unique.get(identity)
+    if old is None or (status=='open' and old[1]!='open'): unique[identity]=(record,status)
+postings=list(unique.values())
 
 def norm(s):
     return unicodedata.normalize('NFKC', s or '').lower()
