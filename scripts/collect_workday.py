@@ -161,7 +161,9 @@ def list_board(board, fetch=request_json, pause=time.sleep):
                     incomplete = True
                     continue
                 if not isinstance(path, str) or not re.fullmatch(r'/job/[A-Za-z0-9_./%~-]+', path) or '..' in path: raise ValueError('invalid listing path')
-                if path in global_paths: raise ValueError('overlapping or duplicate facet results')
+                if path in global_paths:
+                    incomplete = True
+                    continue
                 material = {key: row.get(key) for key in ('title', 'locationsText', 'bulletFields')}
                 signature = hashlib.sha256(json.dumps(material, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
                 global_paths[path] = signature
