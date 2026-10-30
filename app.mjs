@@ -1,4 +1,5 @@
 import vocabulary from './vocabulary.json';
+import {renderDemand,resetDemand} from './demand-view.mjs';
 import { detectSkills } from './matcher.mjs';
 import { filterSnapshot, salarySummary, monthlySalary } from './snapshot.mjs';
 import { renderTrend } from './trend.mjs';
@@ -24,11 +25,7 @@ function renderChecks() {
 function renderComparison() {
   const result = $('result'); result.replaceChildren();
   if (!data || data.vocabulary_version !== vocabulary.version) { result.append(text('p', 'Market comparison is unavailable until compatible statistics are available.')); return; }
-  const counts = new Map(data.skills.map(s => [s.id, s]));
-  const matched = vocabulary.skills.filter(s => selected.has(s.id) && (counts.get(s.id)?.postings || 0) > 0);
-  const missing = vocabulary.skills.filter(s => !selected.has(s.id) && (counts.get(s.id)?.postings || 0) > 0);
-  const p = text('p', ''); p.append(text('strong', 'Matched in this sample: '), document.createTextNode(matched.map(s => s.label).join(', ') || 'None')); result.append(p);
-  const q = text('p', ''); q.append(text('strong', 'Mentioned in the sample, not selected: '), document.createTextNode(missing.map(s => s.label).join(', ') || 'None')); result.append(q);
+  renderDemand({target:result,data,selected,vocabulary,section:$('skill-section').value});
 
 }
 const labels=Object.fromEntries(vocabulary.skills.map(s=>[s.id,s.label]));
@@ -96,7 +93,7 @@ function drawSalary() {
 async function load() {
   try {
     for (const url of ['/snapshot.json','/fallback-snapshot.json']) {
-      try { const response=await fetch(url,{credentials:'omit',referrerPolicy:'no-referrer'});if(!response.ok) continue;const snapshot=await response.json();if(snapshot.schema_version===3 && snapshot.vocabulary_version===vocabulary.version){rawSnapshot=snapshot;break;} } catch { /* Try bundled fallback. */ }
+      try { const response=await fetch(url,{credentials:'omit',referrerPolicy:'no-referrer'});if(!response.ok) continue;const snapshot=await response.json();if([3,4].includes(snapshot.schema_version) && snapshot.vocabulary_version===vocabulary.version){rawSnapshot=snapshot;break;} } catch { /* Try bundled fallback. */ }
     }
     if(!rawSnapshot) throw new Error('No compatible snapshot available');
     const countrySelect=$('country');
@@ -133,6 +130,6 @@ $('file').addEventListener('change', async () => {
   finally { if (sequence === fileSequence) $('file').value = ''; }
 });
 $('detect').addEventListener('click', () => { selected = new Set(detectSkills($('resume').value, vocabulary)); $('comparison').hidden = false; renderChecks(); renderComparison(); });
-$('clear').addEventListener('click', () => { fileSequence++; $('resume').value=''; $('file').value=''; selected.clear(); $('comparison').hidden=true; $('checks').replaceChildren(); $('result').replaceChildren(); $('parse-status').textContent='Résumé cleared from this page.'; });
+$('clear').addEventListener('click', () => { fileSequence++; resetDemand(); $('resume').value=''; $('file').value=''; selected.clear(); $('comparison').hidden=true; $('checks').replaceChildren(); $('result').replaceChildren(); $('parse-status').textContent='Résumé cleared from this page.'; });
 for (const id of ['role','industry','country','posting-status','date-from','date-to','skill-section']) $(id).addEventListener('change',showData);
 load();

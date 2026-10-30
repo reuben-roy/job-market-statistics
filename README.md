@@ -116,3 +116,19 @@ claim that all 500 career sites are currently collected. Logs live under ~/.conf
 Snapshot publication also runs hourly at minute 45, reading already collected records with
 `STATS_SKIP_COLLECTION=1`. This does not re-poll job boards. A global refresh lock prevents
 overlapping publication runs; the daily 03:15 job continues to refresh Lever collection.
+
+## Private skill-demand explorer
+
+Schema 4 snapshots carry exact counts of skill-set signatures per existing filter bucket. Each
+signature encodes required, preferred and responsibility skill sets separately, using the versioned
+vocabulary order. No posting text, employer names or résumés are exported. The Worker validates
+signature counts against individual skill counts and posting totals. Schema 3 remains readable,
+but joint counts and recommendations are explicitly unavailable for those older snapshots.
+
+The résumé explorer computes single-skill demand, selectable radar axes, exact combinations, common
+pairs/triples and one-detected-skill-gap additions entirely in the browser. All market filters apply,
+including the selected job section. Demand percentages use all filtered postings; empty skill
+extractions never count as complete coverage. Recommendations require a selectable minimum overlap
+with existing skills. Counts describe this retained sample and do not assess proficiency, eligibility
+or causal benefit from training. The bundle list is bounded to the twelve most-mentioned selected
+skills; the radar supports three to ten axes.

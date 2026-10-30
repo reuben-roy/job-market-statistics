@@ -24,3 +24,9 @@ class SnapshotMergeTest(unittest.TestCase):
         with self.assertRaises(ValueError):merge_snapshots([snap(GROUP,'2026-10-28T10:00:00')])
 
 if __name__=='__main__':unittest.main()
+
+class PatternMergeTest(unittest.TestCase):
+    def test_exact_patterns_survive_bucket_merging(self):
+        g=copy.deepcopy(GROUP); g['patterns']={'1.0.0':1,'0.0.0':1}
+        a=snap(g); a['schema_version']=4
+        result,_=merge_snapshots([a,a]); self.assertEqual(result['groups'][0]['patterns'],{'1.0.0':2,'0.0.0':2})

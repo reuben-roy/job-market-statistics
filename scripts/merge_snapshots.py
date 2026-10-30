@@ -27,6 +27,10 @@ def merge_snapshots(snapshots):
                     'with_skills': 0, 'skills': {}, 'sections': {s: {} for s in SECTIONS},
                     'salary': {'count': 0, 'min_sum': 0, 'max_sum': 0}}
             target = groups[key]
+            if first['schema_version'] >= 4:
+                target.setdefault('patterns', {})
+                for signature, count in group['patterns'].items():
+                    target['patterns'][signature] = target['patterns'].get(signature, 0) + count
             for name in ('postings', 'classified', 'with_skills'):
                 target[name] += group[name]
             for name, count in group['skills'].items():

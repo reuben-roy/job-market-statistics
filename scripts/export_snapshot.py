@@ -128,10 +128,12 @@ for p, status in postings:
     except (TypeError, ValueError):
         published_on = None
     key = (role(p.get('title', '')), country(p.get('country')), 'unknown', status, published_on)
-    group = buckets.setdefault(key, {'role': key[0], 'country': key[1], 'industry': key[2], 'status': key[3], 'published_on': key[4], 'postings': 0, 'classified': 0, 'with_skills': 0, 'skills': collections.Counter(), 'sections': {name: collections.Counter() for name in ('required', 'preferred', 'responsibilities')}, 'salary': {'count': 0, 'min_sum': 0, 'max_sum': 0}})
+    group = buckets.setdefault(key, {'role': key[0], 'country': key[1], 'industry': key[2], 'status': key[3], 'published_on': key[4], 'postings': 0, 'classified': 0, 'with_skills': 0, 'skills': collections.Counter(), 'sections': {name: collections.Counter() for name in ('required', 'preferred', 'responsibilities')}, 'salary': {'count': 0, 'min_sum': 0, 'max_sum': 0}, 'patterns': collections.Counter()})
     sections, classified = extract(p.get('raw_description') or p.get('description') or '')
     by_section = {name: detect(text) for name, text in sections.items()}
     skills = set(skill for found in by_section.values() for skill in found)
+    signature = '.'.join(format(sum(1 << index for index, skill in enumerate(vocab['skills']) if skill['id'] in by_section[name]), 'x') for name in ('required', 'preferred', 'responsibilities'))
+    group['patterns'][signature] += 1
     group['classified'] += classified
     for name, found in by_section.items(): group['sections'][name].update(found)
     low, high = p.get('salary_min'), p.get('salary_max')
@@ -142,4 +144,4 @@ for p, status in postings:
     group['postings'] += 1
     group['with_skills'] += bool(skills)
     group['skills'].update(skills)
-print(json.dumps({'schema_version': 3, 'vocabulary_version': vocab['version'], 'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'source': 'collector snapshot', 'groups': list(buckets.values())}, separators=(',', ':')))
+print(json.dumps({'schema_version': 4, 'vocabulary_version': vocab['version'], 'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'source': 'collector snapshot', 'groups': list(buckets.values())}, separators=(',', ':')))
