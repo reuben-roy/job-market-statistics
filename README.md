@@ -7,7 +7,8 @@ Counts are estimates based on literal matches in recognized role, responsibility
 Résumé PDF, DOCX and pasted text are parsed and matched in the browser. Files, extracted text, and
 selected skills are not sent to the dashboard's backend. The public snapshot contains only aggregated
 counts grouped by publication date, status, role and country; it includes no company names, job records, or applicant telemetry.
-Industry is currently unknown because the collector has no industry classification.
+Industry is currently unknown because the collector has no industry classification, so the site has
+no industry filter.
 
 ## Daily refresh
 
@@ -52,8 +53,9 @@ not an off-host backup or point-in-time recovery.
 ## Historical comparisons
 
 Date filters are inclusive and exclude postings without a valid source publication date when a date
-range is applied. The line chart compares up to three skills by publication month, and the table
-provides exact counts. These are publication cohorts of the records currently retained by the
+range is applied. The line chart compares up to three skills by publication month, defaulting to the last twelve
+months of share, and the table provides exact counts. Share months with fewer than 20 postings with
+recognized sections are left blank. These are publication cohorts of the records currently retained by the
 collector, not a reconstruction of how many jobs were open in prior months. Closed postings retained
 by the collector are included, but jobs that closed before it began collecting are not available.
 As of the first historical snapshot, the collector retained 8,856 open records and no closed records;
@@ -125,10 +127,20 @@ vocabulary order. No posting text, employer names or résumés are exported. The
 signature counts against individual skill counts and posting totals. Schema 3 remains readable,
 but joint counts and recommendations are explicitly unavailable for those older snapshots.
 
-The résumé explorer computes single-skill demand, selectable radar axes, exact combinations, common
-pairs/triples and one-detected-skill-gap additions entirely in the browser. All market filters apply,
-including the selected job section. Demand percentages use all filtered postings; empty skill
-extractions never count as complete coverage. Recommendations require a selectable minimum overlap
-with existing skills. Counts describe this retained sample and do not assess proficiency, eligibility
-or causal benefit from training. The bundle list is bounded to the twelve most-mentioned selected
-skills; the radar supports three to ten axes.
+The résumé explorer computes match scores, single-skill demand, exact combinations, common
+pairs/triples and suggested additions entirely in the browser. All market filters apply, including
+the selected job section, and the role filter starts on the classified role with the most postings
+sharing two or more of the résumé's skills. Demand percentages use all filtered postings; empty
+skill extractions never count as complete coverage.
+
+A posting is scored when it lists at least three tracked skills, excluding the general traits in
+`skills.mjs`; its match is the share of those skills on the résumé, and 60% or more is a strong match.
+Suggestions rank by how many postings would cross that line if the skill were added, require a
+selectable minimum overlap with existing skills, and stay within the technical or business fields
+the résumé already touches; data and delivery skills are open to both.
+Counts describe this retained sample and do not assess proficiency, eligibility or causal benefit
+from training. The bundle list is bounded to the twelve most-mentioned selected skills.
+
+`skills.mjs` also holds résumé-only shorthand (REST, NLP, ETL) and implied skills (PostgreSQL implies
+SQL). These affect only what the browser detects in a résumé. They are not vocabulary changes and do
+not need a version bump, because the collected counts still use the literal vocabulary.

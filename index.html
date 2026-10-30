@@ -1,10 +1,124 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; worker-src 'self' blob:; connect-src 'self' https://jobs-api.explosion.fun; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"><title>Skills in demand · Job Applicator</title><link rel="stylesheet" href="/style.css"></head>
-<body><header><a class="brand" href="https://jobs.explosion.fun">JOB APPLICATOR <span> / MARKET SIGNALS</span></a><span class="tag">PUBLIC DATA EXPLORER</span></header>
-<main><section class="hero"><div><p class="eyebrow">A SMALL WINDOW INTO THE JOB MARKET</p><h1>See the skills<br><em>showing up.</em></h1><p class="lede">Explore skills mentioned in collected job postings from a selected set of employer boards. Compare them with your résumé, privately in your browser.</p></div><aside><span>01 / THE SIGNAL</span><p>Job postings are a sample, not the whole market. Mentions are estimates, not proof of a requirement.</p></aside></section>
-<section class="panel" aria-labelledby="market-title"><div class="section-head"><div><p class="eyebrow">THE MARKET SAMPLE</p><h2 id="market-title">Skills in collected jobs</h2></div><span id="freshness" class="muted">Loading data…</span></div><div class="filters"><label>Keyword section<select id="skill-section"><option value="all">All selected sections</option><option value="required">Requirements and qualifications</option><option value="preferred">Preferred qualifications</option><option value="responsibilities">Role and responsibilities</option></select></label><label>Role<select id="role"><option value="all">All roles</option><option value="engineering">Engineering</option><option value="data">Data</option><option value="design">Design</option><option value="sales">Sales</option><option value="operations">Operations</option><option value="unknown">Unknown</option></select></label><label>Estimated industry<select id="industry"><option value="all">All industries</option><option value="technology">Technology</option><option value="finance">Finance</option><option value="healthcare">Healthcare</option><option value="other">Other</option><option value="unknown">Unknown</option></select></label><label>Country<select id="country"><option value="all">All countries</option></select></label><label>Posting status<select id="posting-status"><option value="all">Open and closed</option><option value="open">Open</option><option value="closed">Closed</option></select></label><label>Published from<input id="date-from" type="date"></label><label>Published through<input id="date-to" type="date"></label></div><div id="status" role="status" class="notice">Loading aggregate statistics…</div><div id="summary" class="metrics" hidden></div><div id="skills" class="skill-list"></div><button id="show-more" class="secondary" hidden>Show all skills</button><p class="fine">Counts are per posting, with each skill counted once per job. Keywords are matched only in recognized role, responsibility and qualification sections; postings without a recognizable section are excluded from keyword detection. Date filters use the date supplied by the job board; postings without a reliable date are excluded when a date filter is set. This is a limited sample and classification and skill detection are estimates.</p></section>
-<section class="panel"><h2>Collection coverage</h2><p class="fine">Global collection coverage at each daily refresh. Adding boards can change the sample. History starts when tracking was enabled; earlier coverage is unknown.</p><div id="coverage-summary"></div><details><summary>Daily coverage history</summary><div class="table-wrap"><table id="coverage-history"></table></div></details></section><section class="panel" aria-labelledby="trend-title"><div class="section-head"><div><p class="eyebrow">COMPARE OVER TIME</p><h2 id="trend-title">When skills appeared.</h2></div><span class="muted">Monthly publication cohorts</span></div><p class="fine">Compare mentions in retained postings by their published month. Older months include only jobs the collector still has; closed jobs from before collection began are missing. This is not a historical count of all jobs open in each month. Share divides the number mentioning a skill by postings with recognized sections in that month; missing months do not imply zero percent. Changes in board coverage can still affect comparisons.</p><div class="filters" id="trend-controls"><label>Measure<select id="trend-mode"><option value="count">Posting count</option><option value="share">Share of recognized postings</option></select></label><label>First skill<select id="trend-1"></select></label><label>Second skill<select id="trend-2"></select></label><label>Third skill<select id="trend-3"></select></label></div><div id="trend-status" role="status" class="notice">Loading trend data…</div><div id="trend-chart" class="trend-chart"></div><div id="trend-legend" class="trend-legend"></div><details id="trend-details" hidden><summary>View the monthly numbers</summary><div class="table-wrap"><table id="trend-table"></table></div></details></section>
-<section class="panel" aria-labelledby="salary-title"><div class="section-head"><div><p class="eyebrow">POSTED COMPENSATION</p><h2 id="salary-title">Salary ranges in the sample.</h2></div><span class="muted">Annual USD · current filters</span></div><p class="fine">Average midpoint of published annual salary ranges, not actual pay. Only postings with a detected USD range are included; hourly rates, other currencies and unlisted pay are excluded. A range may combine location-specific tiers. Small, changing samples and imperfect extraction can skew comparisons.</p><div id="salary-summary" class="metrics"></div><h3>Average midpoint by publication month</h3><div id="salary-chart" class="trend-chart"></div><p id="salary-chart-status" class="fine"></p><h3>Compare roles</h3><div class="table-wrap"><table id="salary-roles"></table></div><details><summary>View monthly salary averages</summary><p class="fine">Grouped by the posting’s supplied publication month, not when salaries were paid. Months with no listed salaries are omitted.</p><div class="table-wrap"><table id="salary-months"></table></div></details></section>
-<section id="insecure-warning" class="panel notice" hidden>Résumé comparison is available only over a secure connection. Please use HTTPS or the local preview.</section>
-<section id="compare-panel" class="panel compare" aria-labelledby="resume-title" hidden><div class="section-head"><div><p class="eyebrow">YOUR PRIVATE COMPARISON</p><h2 id="resume-title">Bring your experience.</h2></div><span class="privacy">◌ &nbsp; Processed on this device</span></div><p>Paste text or choose a PDF or Word <strong>.docx</strong> file. Your résumé and detected skills stay in this page’s memory; they are not sent to the server or saved. Scanned PDFs may need OCR first.</p><div class="input-grid"><label class="file-label">Choose a file<input id="file" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label><label class="text-label">Or paste résumé text<textarea id="resume" rows="6" placeholder="Paste your résumé here…"></textarea></label></div><div class="actions"><button id="detect">Detect skills &amp; view demand</button><button id="clear" class="secondary">Clear résumé</button><span id="parse-status" role="status" class="muted"></span></div><div id="comparison" hidden><h3>Review your skills</h3><p class="fine">Select or deselect skills to update demand charts, combinations, and suggestions. Detection is approximate and does not assess proficiency.</p><div id="checks" class="checks"></div><div id="result" class="result" aria-live="polite"></div></div></section>
-<footer><p>Built from a limited selection of employer job boards. This is not a measure of all hiring or your eligibility.</p><a href="https://jobs.explosion.fun">About Job Applicator ↗</a></footer></main><script type="module" src="/app.mjs"></script></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; worker-src 'self' blob:; connect-src 'self' https://jobs-api.explosion.fun; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Market Signals · Job Applicator</title>
+<meta name="description" content="See how your résumé matches real job postings, which skills employers ask for, and what to learn next. Your résumé stays on your device.">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf7f2"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b161d">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar"><div class="wrap topbar-inner">
+  <a class="brand" href="/"><img src="/mark.png" alt="" width="32" height="32"><span>Job Applicator</span><span class="brand-sub">Market Signals</span></a>
+  <nav class="tabs" aria-label="Sections">
+    <a href="#match" data-tab="match">Your match</a><a href="#skills" data-tab="skills">Top skills</a><a href="#trends" data-tab="trends">Trends</a><a href="#salaries" data-tab="salaries">Salaries</a><a href="#about" data-tab="about">About</a>
+  </nav>
+</div></header>
+
+<section id="filter-bar" class="wrap filter-bar" aria-label="Filters" hidden>
+  <button id="open-filters" class="btn outline filter-toggle" type="button">Filters<span id="filter-count" class="count" hidden></span></button>
+  <p id="filter-summary" class="filter-summary"></p>
+  <div id="filters-home" class="filters-home"><div id="filters" class="filters" role="group" aria-label="Filter postings">
+    <label>Role<select id="role"><option value="all">All roles</option><option value="engineering">Engineering</option><option value="data">Data</option><option value="design">Design</option><option value="sales">Sales</option><option value="operations">Operations</option><option value="unknown">Other roles</option></select></label>
+    <label>Country<select id="country"><option value="all">All countries</option></select></label>
+    <label>Posted<select id="posted"><option value="any">Any time</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="custom">Custom range…</option></select></label>
+    <label id="from-field" hidden>From<input id="date-from" type="date"></label>
+    <label id="to-field" hidden>Through<input id="date-to" type="date"></label>
+    <label>Status<select id="posting-status"><option value="all">Open and closed</option><option value="open">Open only</option><option value="closed">Closed only</option></select></label>
+    <label>Mentioned in<select id="skill-section"><option value="all">Any section</option><option value="required">Requirements</option><option value="preferred">Preferred</option><option value="responsibilities">Responsibilities</option></select></label>
+    <button id="reset-filters" class="btn quiet" type="button" hidden>Reset</button>
+  </div></div>
+</section>
+<dialog id="filter-sheet" class="sheet" aria-labelledby="sheet-title" closedby="any">
+  <div class="sheet-head"><h2 id="sheet-title">Filter postings</h2><button id="close-filters" class="icon-btn" type="button" aria-label="Close filters">×</button></div>
+  <div id="sheet-body" class="sheet-body"></div>
+  <div class="sheet-foot"><button id="apply-filters" class="btn" type="button">Show results</button></div>
+</dialog>
+
+<main id="main" class="wrap">
+  <p id="status" role="status" class="notice" hidden></p>
+
+  <section id="panel-match" class="panel" aria-labelledby="match-title" tabindex="-1">
+    <div id="upload-view" class="landing">
+      <div class="pitch">
+        <h1 id="match-title">See where your résumé <em>stands.</em></h1>
+        <p class="lede">Compare your skills with <span id="landing-count">thousands of</span> real job postings, then see what to learn next.</p>
+        <div id="insecure-warning" class="notice" hidden>Résumé comparison needs a secure connection. Please use HTTPS or the local preview.</div>
+        <div id="compare-panel" hidden>
+          <label id="drop" class="drop" for="file">
+            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 16V5m0 0-4 4m4-4 4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="drop-title">Choose your résumé</span><span class="drop-hint"><span class="drag-only">or drop it here · </span>PDF or Word (.docx)</span>
+            <input id="file" class="visually-hidden" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          </label>
+          <details class="paste"><summary>Paste text instead</summary><label class="visually-hidden" for="resume">Résumé text</label><textarea id="resume" rows="7" placeholder="Paste your résumé here…"></textarea><button id="detect" class="btn" type="button">See my match</button></details>
+          <p id="parse-status" role="status" class="parse-status" hidden></p>
+          <p class="privacy"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3m-11 0h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Read on your device. Your résumé is never uploaded or saved.</p>
+        </div>
+      </div>
+      <aside class="card preview" aria-labelledby="preview-title">
+        <h2 id="preview-title">Most requested right now</h2>
+        <p id="preview-sub" class="card-sub">Share of collected postings</p>
+        <div id="preview-skills" class="bar-list"></div>
+        <a class="link-like" href="#skills">See all skills</a>
+      </aside>
+    </div>
+    <div id="results-view" hidden>
+      <div class="result-head">
+        <h1 id="results-title" tabindex="-1">Your match</h1>
+        <p id="resume-name" class="result-file"></p>
+        <div class="result-actions"><button id="replace" class="btn outline small" type="button">Try another résumé</button><button id="clear" class="btn quiet small" type="button">Clear</button></div>
+      </div>
+      <p id="role-note" class="notice compact" hidden></p>
+      <div id="result" class="result" aria-live="polite"></div>
+      <a id="trend-link" class="link-like" href="#trends">See how your top skills are trending</a>
+    </div>
+  </section>
+
+  <section id="panel-skills" class="panel" aria-labelledby="skills-title" tabindex="-1" hidden>
+    <div class="panel-head"><div><h1 id="skills-title">Top skills</h1><p id="skills-sub" class="panel-sub"></p></div></div>
+    <div id="summary" class="stat-row"></div>
+    <section class="card">
+      <div id="category-tabs"></div>
+      <div id="skills" class="bar-list"></div>
+      <button id="show-more" class="btn quiet" type="button" hidden>Show all skills</button>
+    </section>
+    <p class="fine">Each skill counts once per posting, and only recognized role, responsibility and qualification sections are searched. Detection is an estimate from a limited sample.</p>
+  </section>
+
+  <section id="panel-trends" class="panel" aria-labelledby="trends-title" tabindex="-1" hidden>
+    <div class="panel-head"><div><h1 id="trends-title">Skill trends</h1><p class="panel-sub">How often skills appear in postings, by the month they were published.</p></div></div>
+    <section class="card">
+      <div class="picker-row"><label>Skill 1<select id="trend-1"></select></label><label>Skill 2<select id="trend-2"></select></label><label>Skill 3<select id="trend-3"></select></label></div>
+      <div class="control-row"><div id="trend-mode" class="segmented" role="group" aria-label="Measure"><button type="button" data-value="share" aria-pressed="true">Share</button><button type="button" data-value="count" aria-pressed="false">Count</button></div><div id="trend-range" class="segmented" role="group" aria-label="Time range"><button type="button" data-value="12" aria-pressed="true">12 mo</button><button type="button" data-value="24" aria-pressed="false">24 mo</button><button type="button" data-value="0" aria-pressed="false">All</button></div></div>
+      <p id="trend-status" role="status" class="notice" hidden></p>
+      <div id="trend-chart" class="line-chart"></div><div id="trend-legend" class="legend"></div>
+      <details id="trend-details" class="data-details" hidden><summary>Monthly numbers</summary><div class="table-wrap"><table id="trend-table"></table></div></details>
+    </section>
+    <p class="fine">Only postings the collector still holds are included, so this is not a history of every job open each month. Months with fewer than 20 readable postings are left blank, and the current month may be incomplete. Changes in board coverage can also move these lines.</p>
+  </section>
+
+  <section id="panel-salaries" class="panel" aria-labelledby="salaries-title" tabindex="-1" hidden>
+    <div class="panel-head"><div><h1 id="salaries-title">Posted salaries</h1><p class="panel-sub">Annual USD ranges published in job postings, not actual pay.</p></div></div>
+    <div id="salary-summary" class="stat-row"></div>
+    <div class="card-grid">
+      <section class="card"><h2>By role</h2><p class="card-sub">Average midpoint of the posted range</p><div id="salary-roles" class="bar-list"></div></section>
+      <section class="card"><h2>By month published</h2><p id="salary-chart-status" class="card-sub"></p><div id="salary-chart" class="line-chart"></div><details class="data-details"><summary>Monthly numbers</summary><div class="table-wrap"><table id="salary-months"></table></div></details></section>
+    </div>
+    <p class="fine">Only postings with a detected USD range are included; hourly rates, other currencies and unlisted pay are left out. A range may combine location-specific tiers, and small samples can skew comparisons.</p>
+  </section>
+
+  <section id="panel-about" class="panel" aria-labelledby="about-title" tabindex="-1" hidden>
+    <div class="panel-head"><div><h1 id="about-title">About this data</h1><p id="freshness" class="panel-sub">Loading…</p></div></div>
+    <div class="card-grid">
+      <section class="card"><h2>Where postings come from</h2><p class="card-sub">Open postings at the latest refresh, from public employer job boards.</p><div id="coverage-summary"></div>
+        <details class="data-details"><summary>Daily coverage history</summary><div class="table-wrap"><table id="coverage-history"></table></div></details></section>
+      <section class="card prose"><h2>How to read it</h2><ul>
+        <li>Postings are a sample of selected employer boards, not the whole job market.</li>
+        <li>A mention is an estimate, not proof that a skill is required. Skills are matched only in recognized role, responsibility and qualification sections.</li>
+        <li>Role is estimated from the job title, so titles we can’t place are grouped as Other roles.</li>
+        <li>Date filters use the date the job board supplied. Postings with no reliable date are left out when a date filter is set.</li>
+        <li>Adding boards changes the sample, so compare shares rather than raw counts over time.</li>
+      </ul></section>
+    </div>
+  </section>
+</main>
+<footer class="wrap footer"><p>This is not a measure of all hiring or of your eligibility.</p><a href="https://jobs.explosion.fun">About Job Applicator</a></footer>
+<script type="module" src="/app.mjs"></script></body></html>

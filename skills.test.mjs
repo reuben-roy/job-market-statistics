@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {CATEGORIES,detectResumeSkills,skillCategory,suggestible} from './skills.mjs';
+const vocabulary=JSON.parse(readFileSync(new URL('./vocabulary.json',import.meta.url)));
+const detect=text=>detectResumeSkills(text,vocabulary);
+test('every vocabulary skill belongs to exactly one category',()=>{const placed=CATEGORIES.flatMap(c=>c.skills);assert.deepEqual([...placed].sort(),vocabulary.skills.map(s=>s.id).sort());});
+test('reads common résumé shorthand and implied skills',()=>{const found=detect('Built REST services, NLP and ETL jobs with PostgreSQL, TypeScript and RAG. GitHub Actions.');for(const id of ['rest-api','natural-language-processing','machine-learning','data-engineering','sql','javascript','generative-ai','llm','ci-cd'])assert.ok(found.has(id),id);});
+test('finds Go only as a listed language',()=>{assert.ok(detect('Languages: Python, Go, Rust').has('go'));assert.equal(detect('Ready to go live. Go to market lead.').has('go'),false);});
+test('everyday words are not read as skills',()=>{const found=detect('I excel at swift delivery and rust removal. The rest of the team graduated Spring 2024.');for(const id of ['excel','swift','rust','rest-api','spring'])assert.equal(found.has(id),false,id);assert.ok(detect('Advanced Excel and Swift').has('excel'));});
+test('data skills are open to every field',()=>{assert.deepEqual(suggestible([{id:'sql'}],new Set(['python'])).map(r=>r.id),['sql']);assert.deepEqual(suggestible([{id:'sql'}],new Set(['marketing'])).map(r=>r.id),['sql']);});
+test('general traits stay in the general category',()=>assert.equal(skillCategory('communication'),'general'));
+test('suggestions stay within fields the résumé touches',()=>{const options=[{id:'kubernetes'},{id:'recruiting'},{id:'communication'}];assert.deepEqual(suggestible(options,new Set(['docker','agile'])).map(r=>r.id),['kubernetes']);assert.deepEqual(suggestible(options,new Set(['marketing'])).map(r=>r.id),['recruiting']);});
