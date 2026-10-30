@@ -99,6 +99,14 @@ async function load() {
       try { const response=await fetch(url,{credentials:'omit',referrerPolicy:'no-referrer'});if(!response.ok) continue;const snapshot=await response.json();if(snapshot.schema_version===3 && snapshot.vocabulary_version===vocabulary.version){rawSnapshot=snapshot;break;} } catch { /* Try bundled fallback. */ }
     }
     if(!rawSnapshot) throw new Error('No compatible snapshot available');
+    const countrySelect=$('country');
+    const regionNames=typeof Intl.DisplayNames==='function'?new Intl.DisplayNames(['en'],{type:'region'}):null;
+    const countries=[...new Set(rawSnapshot.groups.filter(g=>g.postings>0 && /^[A-Z]{2}$/.test(g.country)).map(g=>g.country))]
+      .map(code=>({code,label:regionNames?.of(code)||code})).sort((a,b)=>a.label.localeCompare(b.label));
+    countrySelect.replaceChildren();
+    for(const {code,label} of [{code:'all',label:'All countries'},...countries,{code:'unknown',label:'Unknown country'}]) {
+      const option=document.createElement('option');option.value=code;option.textContent=label;countrySelect.append(option);
+    }
     const coverage=rawSnapshot.coverage;
     $('coverage-summary').textContent=coverage?coverage.platforms.map(p=>`${p.platform}: ${p.boards} collected boards, ${p.postings.toLocaleString()} open postings, ${p.issues} source warnings`).join(' · '):'Coverage tracking is not available in this snapshot.';
     if(coverage) salaryTable($('coverage-history'),['Date (UTC)','Collected boards','Open postings'],coverage.history.map(h=>[h.date,h.boards,h.postings]));
