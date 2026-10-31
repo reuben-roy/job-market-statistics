@@ -154,10 +154,11 @@ main{padding-block:20px 32px;min-height:60vh}
 .is-gain .bar-fill{background:var(--gain)}
 .bar-button{display:grid;grid-column:1/-1;grid-template-columns:subgrid;padding:0 6px;margin-inline:-6px;border:0;border-radius:6px;background:none}
 .bar-button:hover{background:var(--sunken)}
-.bar-key{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;color:var(--ink-3);font-size:.8rem}
+.bar-key{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin-top:10px;color:var(--ink-3);font-size:.8rem}
+.key-item{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .swatch{width:12px;height:12px;border-radius:3px}
 .swatch.have{background:var(--have)}
-.swatch.missing{background:var(--missing);margin-left:10px}
+.swatch.missing{background:var(--missing)}
 .card>.btn.quiet{margin-top:6px;margin-left:-10px}
 .learn-list{display:grid;margin-top:10px}
 .learn-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding-block:6px;border-top:1px solid var(--line)}
@@ -166,6 +167,24 @@ main{padding-block:20px 32px;min-height:60vh}
 .learn-list .bar-name{grid-area:name}.learn-list .bar-value{grid-area:value}.learn-list .bar-track{grid-area:track}
 .inline-select{display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:var(--ink-3);font-size:.8rem}
 .inline-select select{min-height:36px;font-size:.8rem}
+
+/* Demand: bars and radar side by side */
+.market-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;align-items:center;margin-top:4px}
+.market-bars{min-width:0}
+.card-stack{display:grid;gap:var(--gap);align-content:start;min-width:0}
+.radar{min-width:0}
+.radar figcaption{margin-top:6px;color:var(--ink-3);font-size:.8rem;text-align:center}
+.radar-chart{position:relative}
+.radar-chart svg{display:block;margin-inline:auto;touch-action:pan-y;border-radius:6px}
+.radar-ring{fill:none;stroke:var(--line);stroke-width:1}
+.radar-market{fill:none;stroke:var(--ink-3);stroke-width:1.5;stroke-linejoin:round}
+.radar-yours{fill:var(--have);fill-opacity:.16;stroke:var(--have);stroke-width:2;stroke-linejoin:round}
+.radar-dot{fill:var(--have);stroke:var(--surface);stroke-width:2}
+.radar-dot.is-gap{fill:var(--missing);stroke:var(--gain);stroke-width:1.5}
+.radar-focus{fill:none;stroke:var(--ink);stroke-width:2}
+.radar-tick{paint-order:stroke;stroke:var(--surface);stroke-width:3px;font-size:11px}
+.radar-label{font-size:12px;font-weight:500;fill:var(--ink-2)}
+.radar-label.is-gap{fill:var(--ink-3);font-weight:400}
 
 /* Skill editor */
 .skill-editor summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px;cursor:pointer;list-style:none}
@@ -242,6 +261,7 @@ th:first-child,td:first-child{text-align:left;padding-left:0}
   .card-grid{grid-template-columns:minmax(0,1fr)}
   .landing{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:8px}
   .fit-card{grid-template-columns:minmax(0,1fr);gap:20px}
+  .market-split{grid-template-columns:minmax(0,1fr);gap:16px}
 }
 @media(max-width:760px){
   .wrap{padding-inline:16px}

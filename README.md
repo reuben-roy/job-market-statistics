@@ -139,7 +139,9 @@ Suggestions rank by how many postings would cross that line if the skill were ad
 selectable minimum overlap with existing skills, and stay within the technical or business fields
 the résumé already touches; data and delivery skills are open to both.
 Counts describe this retained sample and do not assess proficiency, eligibility or causal benefit
-from training. The bundle list is bounded to the twelve most-mentioned selected skills.
+from training. The bundle list is bounded to the twelve most-mentioned selected skills. The radar
+plots the top eight rows of the demand list on a scale fitted to those values, so its outer ring is
+not 100%.
 
 `skills.mjs` also holds résumé-only shorthand (REST, NLP, ETL) and implied skills (PostgreSQL implies
 SQL). These affect only what the browser detects in a résumé. They are not vocabulary changes and do

@@ -1,7 +1,7 @@
 import {analyzeDemand,FIT_BANDS,MIN_SCORED_SKILLS,STRONG_FIT_LABEL} from './demand.mjs';
-import {barRow,el,percent} from './chart.mjs';
+import {barRow,el,percent,radarChart} from './chart.mjs';
 import {CATEGORIES,GENERAL_SKILLS,suggestible} from './skills.mjs';
-const DEFAULT_ROWS=10,LEARN_ROWS=8;
+const DEFAULT_ROWS=10,LEARN_ROWS=10,RADAR_AXES=8,MIN_RADAR_AXES=3;
 let marketView='all',showAllMarket=false,showAllLearn=false,editing=false,combination=[],minShared=2,selectedKey='';
 export function resetDemand(){marketView='all';showAllMarket=false;showAllLearn=false;editing=false;combination=[];minShared=2;selectedKey='';}
 function card(title,subtitle='',cls=''){const section=el('section','',`card ${cls}`.trim());section.append(el('h2',title));if(subtitle)section.append(el('p',subtitle,'card-sub'));return section;}
@@ -60,7 +60,7 @@ function skillEditor({selected,vocabulary,labels,onChange}){
 function marketCard({analysis,data,selected,labels,onChange}){
   const ranked=data.skills.filter(s=>s.postings>0&&!GENERAL_SKILLS.includes(s.id));
   const have=ranked.filter(s=>selected.has(s.id)),missing=ranked.filter(s=>!selected.has(s.id));
-  const section=card('What employers ask for','The most-mentioned skills in these postings, set against your résumé. Tap a skill to mark it as yours or remove it.');
+  const section=card('What employers ask for','The most-mentioned skills in these postings, set against your résumé. Tap a skill to mark it as yours or remove it.','market-card');
   const rerender=view=>{marketView=view;showAllMarket=false;onChange();};
   section.append(segmented('Skill list',[['all','All'],['have',`You have ${have.length}`],['missing','To add']],marketView,rerender));
   const rows={all:ranked,have,missing}[marketView],visible=showAllMarket?rows:rows.slice(0,DEFAULT_ROWS),peak=rows[0]?.postings||1;
@@ -73,11 +73,21 @@ function marketCard({analysis,data,selected,labels,onChange}){
     button.addEventListener('click',()=>{mine?selected.delete(skill.id):selected.add(skill.id);onChange();});
     list.append(button);
   }
-  section.append(list);
-  const key=el('p','','bar-key');key.append(el('i','','swatch have'),'On your résumé',el('i','','swatch missing'),'Not on your résumé');
-  section.append(key);
-  if(rows.length>DEFAULT_ROWS){const more=el('button',showAllMarket?'Show fewer':`Show all ${rows.length}`,'btn quiet');more.type='button';more.dataset.key='market-more';more.addEventListener('click',()=>{showAllMarket=!showAllMarket;onChange();});section.append(more);}
-  return section;
+  const bars=el('div','','market-bars'),key=el('p','','bar-key');
+  for(const [tone,text] of [['have','On your résumé'],['missing','Not on your résumé']]){const item=el('span',text,'key-item');item.prepend(el('i','',`swatch ${tone}`));key.append(item);}
+  bars.append(list,key);
+  if(rows.length>DEFAULT_ROWS){const more=el('button',showAllMarket?'Show fewer':`Show all ${rows.length}`,'btn quiet');more.type='button';more.dataset.key='market-more';more.addEventListener('click',()=>{showAllMarket=!showAllMarket;onChange();});bars.append(more);}
+  const split=el('div','','market-split');split.append(bars,demandRadar({rows,data,selected,labels}));
+  section.append(split);return section;
+}
+function demandRadar({rows,data,selected,labels}){
+  const figure=el('figure','','radar');
+  if(rows.length<MIN_RADAR_AXES){figure.append(el('p',`The radar needs at least ${MIN_RADAR_AXES} skills.`,'empty'));return figure;}
+  const shown=rows.slice(0,RADAR_AXES),host=el('div','','radar-chart'),share=value=>`${Math.round(value)}%`;
+  const axes=shown.map(s=>({label:labels[s.id],value:100*s.postings/data.denominator.postings,mine:selected.has(s.id)}));
+  const peak=radarChart({host,axes,format:share,description:`Radar of the top ${axes.length} skills by share of postings. Exact values are in the list beside it.`});
+  figure.append(host,el('figcaption',`The top ${axes.length} skills from the list. The outer ring is ${share(peak)} of postings, the outline is demand, and the filled shape is what your résumé covers.`));
+  return figure;
 }
 function learnCard({analysis,selected,labels,onChange,onThreshold}){
   const section=card('What to learn next','Ranked by how many more postings become a strong match if you add the skill.');
@@ -157,9 +167,9 @@ export function renderDemand({target,data,selected,vocabulary,section='all',coho
   minShared=Math.min(Math.max(1,minShared),Math.max(selected.size,1));
   const analysis=analyzeDemand(data.groups,vocabulary.skills.map(s=>s.id),selected,{section,combination,minShared,general:GENERAL_SKILLS});
   if(!analysis.available){target.append(editor,marketCard({analysis,data,selected,labels,onChange:rerender}),el('p','Match scores and suggestions need a newer data snapshot. Individual demand counts are still shown.','notice'));return;}
-  const gaps=el('div','','card-grid even'),strengths=el('div','','card-grid even');
-  gaps.append(marketCard({analysis,data,selected,labels,onChange:rerender}),learnCard({analysis,selected,labels,onChange:rerender,onThreshold:rerender}));
-  strengths.append(strengthCard({data,selected}),pairsCard({analysis,data,labels,skills,onChange:rerender}));
-  target.append(fitCard({analysis,data,cohort,money}),editor,gaps,strengths,methodNote());
+  const next=el('div','','card-grid even'),stack=el('div','','card-stack');
+  stack.append(strengthCard({data,selected}),pairsCard({analysis,data,labels,skills,onChange:rerender}));
+  next.append(learnCard({analysis,selected,labels,onChange:rerender,onThreshold:rerender}),stack);
+  target.append(fitCard({analysis,data,cohort,money}),editor,marketCard({analysis,data,selected,labels,onChange:rerender}),next,methodNote());
   if(focusKey)target.querySelector?.(`[data-key="${focusKey}"]`)?.focus();
 }

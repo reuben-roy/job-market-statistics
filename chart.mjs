@@ -27,13 +27,18 @@ function niceTop(max) {
   return 10*step;
 }
 const observers=new WeakMap();
+// Redraw at the real width whenever it changes, including when a hidden tab or a new view first gets laid out.
+function fitToWidth(host,draw) {
+  observers.get(host)?.disconnect();
+  if(typeof ResizeObserver==='function'){
+    const observer=new ResizeObserver(()=>{if(host.clientWidth && host.clientWidth!==Number(host.dataset.width))draw();});
+    observers.set(host,observer);observer.observe(host);
+  }
+  draw();
+}
 /** Line chart with a snapping crosshair; pointer, touch and arrow keys all drive one readout. */
 export function lineChart({host,points,series,format,axisFormat=format,description,pointNote=()=>''}) {
-  let observer=observers.get(host);
-  if(observer)observer.disconnect();
-  const draw=()=>drawLines({host,points,series,format,axisFormat,description,pointNote});
-  observer=new ResizeObserver(()=>{if(host.clientWidth && host.clientWidth!==Number(host.dataset.width))draw();});
-  observers.set(host,observer);observer.observe(host);draw();
+  fitToWidth(host,()=>drawLines({host,points,series,format,axisFormat,description,pointNote}));
 }
 function drawLines({host,points,series,format,axisFormat,description,pointNote}) {
   host.replaceChildren();
@@ -90,6 +95,69 @@ function drawLines({host,points,series,format,axisFormat,description,pointNote})
   svg.addEventListener('keydown',event=>{
     if(event.key==='ArrowRight'){event.preventDefault();show(current<0?0:current+1);}
     else if(event.key==='ArrowLeft'){event.preventDefault();show(current<0?last:current-1);}
+    else if(event.key==='Escape')hide();
+  });
+}
+/** Radar of market demand, with the résumé's share filled inside it. Returns the value of the outer ring. */
+export function radarChart({host,axes,format,description}) {
+  const peak=niceTop(Math.max(...axes.map(a=>a.value)));
+  fitToWidth(host,()=>drawRadar({host,axes,peak,format,description}));
+  return peak;
+}
+// Long skill names wrap onto two lines; only names that still cannot fit are shortened.
+function labelLines(label,limit) {
+  const [first,...rest]=label.split(' ');
+  let line=first,index=0;
+  while(index<rest.length && `${line} ${rest[index]}`.length<=limit)line+=` ${rest[index++]}`;
+  const lines=[line,rest.slice(index).join(' ')].filter(Boolean);
+  return lines.map(text=>text.length>limit?`${text.slice(0,limit-1).trimEnd()}…`:text);
+}
+function drawRadar({host,axes,peak,format,description}) {
+  host.replaceChildren();
+  const width=host.clientWidth;host.dataset.width=width;
+  if(!width)return;
+  const narrow=width<400,gutter=narrow?64:96,limit=narrow?11:15,count=axes.length,radius=Math.min(width/2-gutter,170),height=2*radius+84,cx=width/2,cy=height/2;
+  const point=(i,fraction)=>{const angle=-Math.PI/2+i*2*Math.PI/count;return [cx+Math.cos(angle)*radius*fraction,cy+Math.sin(angle)*radius*fraction];};
+  const ring=fractions=>fractions.map((f,i)=>point(i,f).join(',')).join(' ');
+  const svg=svgEl('svg',{width,height,viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':description,tabindex:0});
+  for(const step of [.25,.5,.75,1]){
+    svg.append(svgEl('polygon',{points:ring(axes.map(()=>step)),class:step===1?'radar-ring axis':'radar-ring'}));
+    // Ring values sit between the first two spokes, where no axis line runs through them.
+    const [ax,ay]=point(0,step),[bx,by]=point(1,step),t=svgEl('text',{x:(ax+bx)/2,y:(ay+by)/2+4,'text-anchor':'middle',class:'tick radar-tick'});t.textContent=format(peak*step);svg.append(t);
+  }
+  axes.forEach((_,i)=>{const [x,y]=point(i,1);svg.append(svgEl('line',{x1:cx,y1:cy,x2:x,y2:y,class:'grid'}));});
+  const market=axes.map(a=>a.value/peak);
+  svg.append(svgEl('polygon',{points:ring(market),class:'radar-market'}));
+  // A skill the résumé lacks drops to the centre, so every gap reads as a dent against the market outline.
+  if(axes.some(a=>a.mine))svg.append(svgEl('polygon',{points:ring(axes.map((a,i)=>a.mine?market[i]:0)),class:'radar-yours'}));
+  axes.forEach((axis,i)=>{
+    const [x,y]=point(i,market[i]),[lx,ly]=point(i,1),side=Math.abs(lx-cx)<8?'middle':lx<cx?'end':'start',above=ly<cy-radius*.7,below=ly>cy+radius*.7;
+    svg.append(svgEl('circle',{cx:x,cy:y,r:4,class:axis.mine?'radar-dot':'radar-dot is-gap'}));
+    const lines=labelLines(axis.label,limit),labelX=lx+(side==='middle'?0:side==='end'?-8:8),labelY=ly+(above?-8-14*(lines.length-1):below?16:4-7*(lines.length-1));
+    const label=svgEl('text',{x:labelX,y:labelY,'text-anchor':side,class:axis.mine?'radar-label':'radar-label is-gap'});
+    lines.forEach((text,line)=>{const span=svgEl('tspan',{x:labelX,dy:line?14:0});span.textContent=text;label.append(span);});
+    svg.append(label);
+  });
+  const mark=svgEl('circle',{r:6,class:'radar-focus',visibility:'hidden'}),tip=el('div','','chart-tip');tip.hidden=true;svg.append(mark);host.append(svg,tip);
+  let current=-1;
+  const show=i=>{
+    current=(i+count)%count;
+    const axis=axes[current],[x,y]=point(current,market[current]);
+    mark.setAttribute('cx',x);mark.setAttribute('cy',y);mark.setAttribute('visibility','visible');
+    const value=el('span','','tip-row');value.append(el('b',format(axis.value)),document.createTextNode(' of postings'));
+    tip.replaceChildren(el('strong',axis.label),value,el('span',axis.mine?'On your résumé':'Not on your résumé','tip-row'));
+    tip.hidden=false;
+    tip.style.left=`${Math.max(0,Math.min(width-tip.offsetWidth,x+12))}px`;tip.style.top=`${Math.max(0,Math.min(height-tip.offsetHeight,y+12))}px`;
+  };
+  const hide=()=>{current=-1;tip.hidden=true;mark.setAttribute('visibility','hidden');};
+  const nearest=event=>{const box=svg.getBoundingClientRect(),angle=Math.atan2(event.clientY-box.top-cy,event.clientX-box.left-cx)+Math.PI/2;return Math.round(angle/(2*Math.PI/count));};
+  svg.addEventListener('pointermove',event=>show(nearest(event)));
+  svg.addEventListener('pointerdown',event=>show(nearest(event)));
+  svg.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse')hide();});
+  svg.addEventListener('blur',hide);
+  svg.addEventListener('keydown',event=>{
+    if(event.key==='ArrowRight'){event.preventDefault();show(current<0?0:current+1);}
+    else if(event.key==='ArrowLeft'){event.preventDefault();show(current<0?count-1:current-1);}
     else if(event.key==='Escape')hide();
   });
 }
