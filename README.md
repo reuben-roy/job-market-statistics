@@ -6,9 +6,17 @@ Counts are estimates based on literal matches in recognized role, responsibility
 
 Résumé PDF, DOCX and pasted text are parsed and matched in the browser. Files, extracted text, and
 selected skills are not sent to the dashboard's backend. The public snapshot contains only aggregated
-counts grouped by publication date, status, role and country; it includes no company names, job records, or applicant telemetry.
+counts grouped by publication date, status, role and country; it includes no company names or job records.
 Industry is currently unknown because the collector has no industry classification, so the site has
 no industry filter.
+
+## Website analytics
+
+Cloudflare Web Analytics measures site visits and page performance through the existing
+`explosion.fun` zone configuration. Cloudflare automatically injects its beacon; `index.html`
+permits the beacon in its Content Security Policy. View reports in the Cloudflare dashboard under
+**Web Analytics**, selecting `explosion.fun` and filtering the hostname to
+`statistics.jobs.explosion.fun`. The zone configuration currently excludes visitors in the EU.
 
 ## Daily refresh
 
