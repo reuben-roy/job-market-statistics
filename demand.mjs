@@ -6,7 +6,6 @@ const STRONG_BAND=3, SECTIONS=['required','preferred','responsibilities'];
 export function bitCount(value) {let n=0;while(value){value&=value-1n;n++;}return n;}
 const band=(have,scored)=>Math.min(4,Math.floor(have*5/scored));
 const decodedSets=new Map();
-// Signatures repeat across buckets, so each one is parsed once per vocabulary.
 function decoder(ids) {
   const key=ids.join(','); let cache=decodedSets.get(key);
   if(!cache){cache=new Map();decodedSets.set(key,cache);}
@@ -26,7 +25,6 @@ export function analyzeDemand(groups, ids, selected, {section='all',combination=
   const fit=[0,0,0,0,0];
   const available=groups.every(g=>g.patterns && typeof g.patterns==='object');
   if(!available)return {available:false};
-  // Limit bundle exploration to twelve selected axes for predictable browser work.
   const selectedCounts=new Map([...selected].map(id=>[id,groups.reduce((n,g)=>n+(section==='all'?g.skills[id]||0:g.sections[section]?.[id]||0),0)]));
   const bundleIds=[...selected].sort((a,b)=>(selectedCounts.get(b)||0)-(selectedCounts.get(a)||0)||a.localeCompare(b)).slice(0,12);
   const decode=decoder(ids), sectionIndex=SECTIONS.indexOf(section);
@@ -47,7 +45,6 @@ export function analyzeDemand(groups, ids, selected, {section='all',combination=
       if(sharedEnough && !selected.has(id)) {
         related.set(id,(related.get(id)||0)+count);
         if(missing===bits.get(id))gaps.set(id,(gaps.get(id)||0)+count);
-        // A gain is a posting that crosses into a strong match if this one skill is added.
         if(weak && !(generalMask&bits.get(id)) && band(have+1,listed)>=STRONG_BAND)gains.set(id,(gains.get(id)||0)+count);
       }
     }
@@ -65,7 +62,6 @@ export function analyzeDemand(groups, ids, selected, {section='all',combination=
     bundles:[...bundles].map(([key,count])=>({ids:key.split(','),count})).sort((a,b)=>b.count-a.count||a.ids.join(',').localeCompare(b.ids.join(','))),
     recommendations:[...related].map(([id,count])=>({id,related:count,additional:gaps.get(id)||0,gain:gains.get(id)||0})).sort((a,b)=>b.gain-a.gain||b.related-a.related||a.id.localeCompare(b.id))};
 }
-/** The classified role with the most postings sharing two or more skills; unclassified titles never win. */
 export function inferRole(groups, ids, selected) {
   const decode=decoder(ids), bits=new Map(ids.map((id,i)=>[id,1n<<BigInt(i)]));
   const mask=[...selected].reduce((n,id)=>n|(bits.get(id)||0n),0n), byRole=new Map();

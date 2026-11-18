@@ -66,7 +66,6 @@ class Sections(HTMLParser):
 def extract(html):
     parser = Sections()
     parser.feed(html or '')
-    # Discard recurring candidate-facing process boilerplate even if the employer omitted a heading.
     noise = re.compile(r'\b(?:reasonable accommodations?|applicants? with disabilities|candidates? with disabilities|recruiting (?:team|process)|recruitment process|hiring process|application process|equal opportunity employer)\b', re.I)
     return {key: '\n'.join(line for line in ''.join(value).splitlines() if not noise.search(line)) for key, value in parser.sections.items()}, parser.found
 
@@ -119,7 +118,6 @@ def role(title):
 def country(value):
     return value if value and re.fullmatch(r'[A-Z]{2}', value) else 'unknown'
 
-# Each bucket is disjoint, so the browser can sum filtered posting counts without receiving records.
 buckets = {}
 for p, status in postings:
     try:

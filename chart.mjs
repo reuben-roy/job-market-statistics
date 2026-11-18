@@ -1,4 +1,3 @@
-/** Small chart kit. Charts are drawn at the real pixel width so text stays legible on phones. */
 const NS='http://www.w3.org/2000/svg';
 export const el=(tag,value='',cls='')=>{const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;};
 const svgEl=(tag,attrs={})=>{const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e;};
@@ -49,7 +48,6 @@ function drawLines({host,points,series,format,axisFormat,description,pointNote})
   const labelled=!narrow && series.length>1;
   const right=labelled?Math.min(120,12+7*Math.max(...ends.map(e=>e.s.label.length))):16;
   const peak=niceTop(Math.max(0,...series.flatMap(s=>s.values.map(v=>v??0)))||1);
-  // Tick text sets the gutter, so long money labels are never clipped.
   const left=14+7*Math.max(...[0,1,2,3,4].map(i=>axisFormat(peak*i/4).length));
   const innerW=width-left-right,innerH=height-top-bottom;
   const x=i=>left+(last?i*innerW/last:innerW/2),y=v=>top+innerH-(v/peak)*innerH;
@@ -104,7 +102,6 @@ export function radarChart({host,axes,format,description}) {
   fitToWidth(host,()=>drawRadar({host,axes,peak,format,description}));
   return peak;
 }
-// Long skill names wrap onto two lines; only names that still cannot fit are shortened.
 function labelLines(label,limit) {
   const [first,...rest]=label.split(' ');
   let line=first,index=0;
@@ -122,13 +119,11 @@ function drawRadar({host,axes,peak,format,description}) {
   const svg=svgEl('svg',{width,height,viewBox:`0 0 ${width} ${height}`,role:'img','aria-label':description,tabindex:0});
   for(const step of [.25,.5,.75,1]){
     svg.append(svgEl('polygon',{points:ring(axes.map(()=>step)),class:step===1?'radar-ring axis':'radar-ring'}));
-    // Ring values sit between the first two spokes, where no axis line runs through them.
     const [ax,ay]=point(0,step),[bx,by]=point(1,step),t=svgEl('text',{x:(ax+bx)/2,y:(ay+by)/2+4,'text-anchor':'middle',class:'tick radar-tick'});t.textContent=format(peak*step);svg.append(t);
   }
   axes.forEach((_,i)=>{const [x,y]=point(i,1);svg.append(svgEl('line',{x1:cx,y1:cy,x2:x,y2:y,class:'grid'}));});
   const market=axes.map(a=>a.value/peak);
   svg.append(svgEl('polygon',{points:ring(market),class:'radar-market'}));
-  // A skill the résumé lacks drops to the centre, so every gap reads as a dent against the market outline.
   if(axes.some(a=>a.mine))svg.append(svgEl('polygon',{points:ring(axes.map((a,i)=>a.mine?market[i]:0)),class:'radar-yours'}));
   axes.forEach((axis,i)=>{
     const [x,y]=point(i,market[i]),[lx,ly]=point(i,1),side=Math.abs(lx-cx)<8?'middle':lx<cx?'end':'start',above=ly<cy-radius*.7,below=ly>cy+radius*.7;

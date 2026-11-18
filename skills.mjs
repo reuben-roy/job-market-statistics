@@ -15,10 +15,8 @@ export const CATEGORIES = [
 const categoryOf = new Map(CATEGORIES.flatMap(c => c.skills.map(id => [id, c.id])));
 export const skillCategory = id => categoryOf.get(id) || 'general';
 
-/** Traits most postings ask for and few résumés spell out, so they would distort a match score. */
 export const GENERAL_SKILLS = CATEGORIES.at(-1).skills;
 
-// Plain résumé shorthand for skills the vocabulary only recognizes in their long form. Case-sensitive.
 const SHORTHAND = {
   'rest-api':[/\bREST(?:ful)?\b/],
   'natural-language-processing':[/\bNLP\b/],
@@ -38,7 +36,6 @@ const SHORTHAND = {
   dotnet:[/\bASP\.NET\b/i,/\bEntity Framework\b/i],
   'data-visualization':[/\bD3(?:\.js)?\b/]
 };
-// Skills that are safe to assume from a more specific one.
 const IMPLIES = {
   postgresql:['sql'],mysql:['sql'],typescript:['javascript'],nextjs:['react'],
   pytorch:['machine-learning','deep-learning'],tensorflow:['machine-learning','deep-learning'],
@@ -46,7 +43,6 @@ const IMPLIES = {
   'natural-language-processing':['machine-learning'],'computer-vision':['machine-learning'],
   llm:['generative-ai']
 };
-// Everyday words that are only skills when written like a product name.
 const NEEDS_CASE = {excel:/\bExcel\b(?!\s+(?:at|in)\b)/,rust:/\bRust\b/,swift:/\bSwift\b/,ruby:/\bRuby\b/,flask:/\bFlask\b/,angular:/\bAngular(?:JS)?\b/,sap:/\bSAP\b/};
 
 export function detectResumeSkills(text, vocabulary) {
@@ -58,10 +54,8 @@ export function detectResumeSkills(text, vocabulary) {
   return found;
 }
 
-// Data and delivery skills cross fields, so they are open to everyone and claim no field of their own.
 const FIELDS = {languages:'tech',frameworks:'tech',cloud:'tech',ai:'tech',product:'business',business:'business'};
 
-/** Keep suggestions inside fields the résumé already touches: a developer is not told to learn recruiting. */
 export function suggestible(recommendations, selected) {
   const fields = new Set([...selected].map(id => FIELDS[skillCategory(id)]));
   return recommendations.filter(r => {
